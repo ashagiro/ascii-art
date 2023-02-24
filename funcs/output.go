@@ -22,12 +22,12 @@ func Output() {
 	}
 	for _, value := range versions {
 		if value == version {
-			validFile := FileCheck(value)
+			validFile := FileCheck("./banners/" + value)
 			if !validFile {
 				fmt.Println("Not a valid file!")
 				return
 			}
-			file, _ := os.Open(value + ".txt")
+			file, _ := os.Open("./banners/" + value + ".txt")
 			defer file.Close()
 			reader := bufio.NewScanner(file)
 			art := ""
