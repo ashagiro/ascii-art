@@ -1,4 +1,4 @@
-package functions
+package funcs
 
 func DefineAsciiSymbol() map[int]int {
 	symbols := make(map[int]int)

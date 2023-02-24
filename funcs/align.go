@@ -1,8 +1,9 @@
-package functions
+package funcs
 
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strconv"
@@ -17,31 +18,33 @@ func Align(s string) {
 	str := os.Args[2]
 	version := os.Args[3]
 	if !(s == "center" || s == "left" || s == "right" || s == "justify") {
-		fmt.Println("Incorrect format >> " + s)
-		return
+		log.Println("Incorrect format >> " + s)
+		os.Exit(1)
 	}
 	if !(version == "thinkertoy" || version == "shadow" || version == "standard") {
-		fmt.Println("Incorrect format >> " + version)
-		return
+		log.Println("Incorrect format >> " + version)
+		os.Exit(1)
 	}
 	// following lines are to calculate the width of the terminal window
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	out, err := cmd.Output()
 	if err != nil {
-		return
+		log.Println(err)
+		os.Exit(1)
 	}
 	arr := []string{}
 	arr = strings.Split(string(out[:len(out)-1]), " ")
-	width, err2 := strconv.Atoi(arr[1])
-	if err2 != nil {
-		return
+	width, err := strconv.Atoi(arr[1])
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
 	}
 
 	validFile := FileCheck(version)
 	if !validFile {
-		fmt.Println("Not a valid file!")
-		return
+		log.Println("Not a valid file!")
+		os.Exit(1)
 	}
 	file, _ := os.Open(version + ".txt")
 	defer file.Close()
@@ -61,8 +64,8 @@ func Align(s string) {
 		}
 		word := Write(MakeArt(keys, []byte(art)))
 		if len(word)/8 > width {
-			fmt.Println("Too many words")
-			return
+			log.Println("Too many words")
+			os.Exit(1)
 		}
 		fmt.Println(ApplyFunc(artlen, s, word, width))
 	}

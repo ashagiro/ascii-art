@@ -1,37 +1,35 @@
-package functions
+package funcs
 
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
-type colors struct {
-	color string
-	code  string
-}
-
-// Following link was helpful: https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
-
-func Color(s string) {
-	array := []colors{
-		{"black", "\u001b[30;1m"}, {"yellow", "\u001b[33;1m"}, {"red", "\u001b[31;1m"}, {"green", "\u001b[32;1m"}, {"blue", "\u001b[34;1m"}, {"magenta", "\u001b[35;1m"}, {"cyan", "\u001b[36;1m"}, {"white", "\u001b[37;1m"}, {"purple", "\033[95m"}, {"orange", "\033[38;2;255;165;0m"},
+func Color() {
+	s := os.Args[1][8:]
+	colors := map[string]string{
+		"black":   "\u001b[30;1m",
+		"yellow":  "\u001b[33;1m",
+		"red":     "\u001b[31;1m",
+		"green":   "\u001b[32;1m",
+		"blue":    "\u001b[34;1m",
+		"magenta": "\u001b[35;1m",
+		"cyan":    "\u001b[36;1m",
+		"white":   "\u001b[37;1m",
+		"purple":  "\033[95m",
+		"orange":  "\033[38;2;255;165;0m",
 	}
-	paint := ""
-	for _, v := range array {
-		if v.color == s {
-			paint = v.code
-		}
-	}
-	if len(paint) == 0 {
+
+	paint, found := colors[s]
+	if !found {
 		ErrorMsgColor()
-		return
 	}
-	validFile := FileCheck("standard")
-	if !validFile {
-		fmt.Println("Not a valid file!")
-		return
+	if !FileCheck("standard") {
+		log.Println("Not a valid file!")
+		os.Exit(1)
 	}
 	file, _ := os.Open("standard.txt")
 	defer file.Close()

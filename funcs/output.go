@@ -1,4 +1,4 @@
-package functions
+package funcs
 
 import (
 	"bufio"
@@ -6,22 +6,19 @@ import (
 	"os"
 )
 
-func Default() {
+func Output() {
+	s := os.Args[1][9:]
 	versions := []string{"shadow", "thinkertoy", "standard"}
-	str := os.Args[1]
+	str := os.Args[2]
 	for _, value := range str {
 		if !(value > 0 && value <= 255) {
 			fmt.Println("Only ascii chars!")
 			return
 		}
 	}
-	if len(os.Args) > 3 {
-		ErrorMsg()
-		return
-	}
 	version := "standard"
-	if len(os.Args) == 3 {
-		version = os.Args[2]
+	if len(os.Args) == 4 {
+		version = os.Args[3]
 	}
 	for _, value := range versions {
 		if value == version {
@@ -38,9 +35,26 @@ func Default() {
 				art += reader.Text() + "\n"
 			}
 			arr := MakeArt(str, []byte(art))
-			fmt.Println(Write(arr))
+
+			file, err := os.Create(s)
+			if err != nil {
+				fmt.Println("Oopps! File " + s + " can not be created.")
+				return
+			}
+			defer file.Close()
+
+			u, err := file.WriteString(Write(arr) + "\n\n")
+			Error(err)
+			u = 1 + u
 			return
 		}
 	}
 	fmt.Println("Invalid format! --> ", version)
+}
+
+func Error(err error) {
+	if err != nil {
+		fmt.Println("Oopps! Can not save the text.")
+		return
+	}
 }

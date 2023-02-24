@@ -1,30 +1,35 @@
-package functions
+package funcs
 
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
-func Output(s string) {
+func Default() {
 	versions := []string{"shadow", "thinkertoy", "standard"}
-	str := os.Args[2]
+	str := os.Args[1]
 	for _, value := range str {
 		if !(value > 0 && value <= 255) {
 			fmt.Println("Only ascii chars!")
 			return
 		}
 	}
+	if len(os.Args) > 3 {
+		ErrorMsg()
+		return
+	}
 	version := "standard"
-	if len(os.Args) == 4 {
-		version = os.Args[3]
+	if len(os.Args) == 3 {
+		version = os.Args[2]
 	}
 	for _, value := range versions {
 		if value == version {
 			validFile := FileCheck(value)
 			if !validFile {
-				fmt.Println("Not a valid file!")
-				return
+				log.Println("Not a valid file!")
+				os.Exit(1)
 			}
 			file, _ := os.Open(value + ".txt")
 			defer file.Close()
@@ -34,26 +39,9 @@ func Output(s string) {
 				art += reader.Text() + "\n"
 			}
 			arr := MakeArt(str, []byte(art))
-
-			file, err := os.Create(s)
-			if err != nil {
-				fmt.Println("Oopps! File " + s + " can not be created.")
-				return
-			}
-			defer file.Close()
-
-			u, err := file.WriteString(Write(arr) + "\n\n")
-			Error(err)
-			u = 1 + u
+			fmt.Println(Write(arr))
 			return
 		}
 	}
 	fmt.Println("Invalid format! --> ", version)
-}
-
-func Error(err error) {
-	if err != nil {
-		fmt.Println("Oopps! Can not save the text.")
-		return
-	}
 }
